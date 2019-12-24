@@ -64,7 +64,7 @@ let signUpFunction = (req, res) => {
                             let newUserObj = newUser.toObject();
                             console.log(newUserObj);
                             // Send Email 
-                            var fromEmail = "sav.inder279@gmail.com";
+                            var fromEmail = "inderjeet.sav@neosofttech.com";
                             const sgMail = require('@sendgrid/mail');
                             SENDGRID_APY_KEY = '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';
                             sgMail.setApiKey(SENDGRID_APY_KEY);

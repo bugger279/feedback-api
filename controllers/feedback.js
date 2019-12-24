@@ -16,7 +16,22 @@ let giveUserFeedback = (req, res) => {
                 jwt.verify(req.header('token'), 'mySecretKey', options, (err, decoded) => {
                     if (err) {
                         let apiResponse = response.generate(true, "Invalid WebToken", 406, "");
-                        reject(apiResponse);    
+                        let fetchUserRandom = (req, res) => {
+                            UserModel.count().exec(function(err, count){
+                                var random = Math.floor(Math.random() * count);
+                                Model.findOne().skip(random).exec(
+                                    function (err, result) {
+                                    if (err) {
+                                        console.log(err);
+                                    } else {
+                                        console.log("===============Random===============");
+                                        console.log(result);
+                                        console.log("===============Random===============");
+                                    }
+                                });
+                            });
+                        }
+                        reject(apiResponse);
                     } else { resolve(decoded); }
                 });
             } else {
@@ -104,7 +119,6 @@ let giveUserFeedback = (req, res) => {
     validateToken(req, res)
         .then(insertFeedback)
         .then((resolve) => {
-            console.log(resolve);
             let apiResponse = response.generate(false, 'Token Validated', 200, resolve);
             res.send(apiResponse);
         })
@@ -116,6 +130,7 @@ let giveUserFeedback = (req, res) => {
 let viewFeedback = (req, res) => {
     return "Hi"
 }
+
 
 
 module.exports = { giveUserFeedback, viewFeedback };
