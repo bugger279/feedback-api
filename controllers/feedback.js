@@ -131,6 +131,4 @@ let viewFeedback = (req, res) => {
     return "Hi"
 }
 
-
-
 module.exports = { giveUserFeedback, viewFeedback };

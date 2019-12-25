@@ -5,6 +5,7 @@ const UserModel = require('../models/user');
 // Importing Router
 const registerController = require('../controllers/user');
 const feedbackController = require('../controllers/feedback');
+const allotController = require('../controllers/allotUser');
 
 // Creating a route for User
 router.post('/register', registerController.signUpFunction);
@@ -14,6 +15,7 @@ router.post('/login', registerController.loginFunction);
 router.post('/feedback', feedbackController.giveUserFeedback);
 router.get('/feedback', feedbackController.viewFeedback);
 
+router.post('/allotUser', allotController.allotUser )
 
 router.get('/usersList', function(req, res) {
 
@@ -22,18 +24,8 @@ router.get('/usersList', function(req, res) {
 // )
 // console.log(randomeData);
 
-//   UserModel.find({}, function(err, users) {
-//     var userMap = { };
+//   
 
-
-//     users.forEach(function(user) {
-//       userMap[user._id] = user._id;
-//     });
-//     var count = Object.keys(userMap).length;
-//     console.log(userMap);
-
-//     res.send({"data" : userMap});
-//   });
 
 var cursor = UserModel.aggregate([{ $match : "" }, { $skip: 0 }]).cursor({ batchSize: 10 }).exec();
 cursor.eachAsync(function(error, doc) {
