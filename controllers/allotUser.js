@@ -15,10 +15,9 @@ let allotUser = (req, res) => {
         var flag = 0;
 
         for (let selectedUserPosition = 0; selectedUserPosition < userTotalCount; selectedUserPosition++) {
-            console.log("selectedUserPosition : " + selectedUserPosition);
+
             while (assignedUsers.length != 3) {
                 var random = randomNumber(0, userTotalCount -1);
-                console.log("random : " + random);
                 if ((selectedUserPosition != random)) { //random no. should not be equal to selected user's position
                     if (assignedUsers.indexOf(random) < 0) {
                         assignedUsers.push(random);

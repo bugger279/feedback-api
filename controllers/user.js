@@ -5,6 +5,7 @@ const response = require('../libs/response');
 const check = require('../libs/checkLib');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const sendmail = require('sendmail')();
 
 let passwordArray = ['ant', 'dec', 'bee', 'cat', 'elephant', 'fox', 'goat', 'hen', 'impala', 'jackal', 'koala', 'lion', 'monkey', 'newt', 'owl', 'parrot', 'quail', 'rat', 'snake', 'tiger', 'unau', 'vampire', 'walrus', 'xenarthra', 'yak', 'zebra'];
 function getRandomInt(min, max) {
@@ -62,21 +63,34 @@ let signUpFunction = (req, res) => {
                             reject(apiResponse);
                         } else {
                             let newUserObj = newUser.toObject();
-                            console.log(newUserObj);
                             // Send Email 
                             var fromEmail = "inderjeet.sav@neosofttech.com";
-                            const sgMail = require('@sendgrid/mail');
-                            SENDGRID_APY_KEY = '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';
-                            sgMail.setApiKey(SENDGRID_APY_KEY);
-                            const msg = {
-                                to: newUserObj.email,
+                            // const sgMail = require('@sendgrid/mail');
+                            // SENDGRID_APY_KEY = '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';
+                            // sgMail.setApiKey(SENDGRID_APY_KEY);
+                            // const msg = {
+                            //     to: newUserObj.email,
+                            //     from: fromEmail,
+                            //     subject: 'Feedback Credentials',
+                            //     html: 'Your Email Id is <strong>' + newUserObj.email + '</strong> <br>Your Password is <strong>' + passwordGenerated + '</strong>',
+                            // };
+                            // sgMail.send(msg).then(() => {
+                            // }).catch((error) => {
+                            //     console.log('error', JSON.stringify(error));
+                            // });
+
+                            // SendMail Code
+                            sendmail({
                                 from: fromEmail,
+                                to: newUserObj.email,
                                 subject: 'Feedback Credentials',
                                 html: 'Your Email Id is <strong>' + newUserObj.email + '</strong> <br>Your Password is <strong>' + passwordGenerated + '</strong>',
-                            };
-                            sgMail.send(msg).then(() => {
-                            }).catch((error) => {
-                                console.log('error', JSON.stringify(error));
+                            }, (err, reply) => {
+                                if (err) {
+                                    console.log("Not Sent");
+                                } else {
+                                    console.log("Sent Successfully!");
+                                }
                             });
                             resolve(newUserObj);
                         }
@@ -93,10 +107,9 @@ let signUpFunction = (req, res) => {
     validateInputs(req, res)
         .then(createUser)
         .then((resolve) => {
-            console.log(resolve);
             delete resolve.password;
             let apiResponse = response.generate(false, `${resolve.name} registered with our database. Password details has been sent to registered email id`, 200, resolve);
-            res.send(apiResponse);
+            res.status(201).send(apiResponse);
         })
         .catch((err) => {
             res.send(err);
@@ -141,7 +154,7 @@ let loginFunction = (req, res) => {
                     let retreivedUserDetailsObj = retreivedUserDetails.toObject();
                     delete retreivedUserDetailsObj.password;
                     delete retreivedUserDetailsObj.__v;
-                    const payload = { UserData: retreivedUserDetailsObj };                    
+                    const payload = { UserData: retreivedUserDetailsObj };
                     const options = { expiresIn: '2d', issuer: 'Inder' };
                     const secret = "mySecretKey";
                     const token = jwt.sign(payload, secret, options);
@@ -161,13 +174,27 @@ let loginFunction = (req, res) => {
     findUser(req, res)
         .then(validatePassword)
         .then((resolve) => {
-            console.log(resolve);
             let apiResponse = response.generate(false, 'Login Successful', 200, resolve);
             res.send(apiResponse)
         })
         .catch((err) => {
             res.send(err)
         })
+}
+
+let viewAllUsers = (req, res) => {
+    return new Promise((resolve, reject) => {
+        UserModel.find({}, (err, usersData) => {
+            if (err) {
+                let apiResponse = response.generate(true, "Internal Server Error", 500, null);
+                res.status(500);
+                reject(apiResponse);
+            } else {
+                
+            }
+        });
+    }).then()
+        .catch();
 }
 
 module.exports = { signUpFunction, loginFunction };

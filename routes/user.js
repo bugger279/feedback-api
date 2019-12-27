@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const UserModel = require('../models/user');
 
 // Importing Router
 const registerController = require('../controllers/user');
@@ -19,7 +18,7 @@ router.get('/feedback', feedbackController.fetchYourFeedback);
 router.post('/allotUser', allotController.allotUser );
 
 // Fetching ids of alloted users to sender id's 
-router.get('/fetchIds', fetchController.fetchUsers );
+router.get('/fetchIds/:sender_id', fetchController.fetchUsers);
 
 // Export Router
 module.exports = router;
