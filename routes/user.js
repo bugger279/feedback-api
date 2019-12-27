@@ -6,6 +6,8 @@ const UserModel = require('../models/user');
 const registerController = require('../controllers/user');
 const feedbackController = require('../controllers/feedback');
 const allotController = require('../controllers/allotUser');
+const fetchController = require('../controllers/fetchUser');
+
 
 // Creating a route for User
 router.post('/register', registerController.signUpFunction);
@@ -13,8 +15,11 @@ router.post('/login', registerController.loginFunction);
 
 // Creating a route for feedback
 router.post('/feedback', feedbackController.giveUserFeedback);
-router.get('/feedback', feedbackController.viewFeedback);
-router.post('/allotUser', allotController.allotUser )
+router.get('/feedback', feedbackController.fetchYourFeedback);
+router.post('/allotUser', allotController.allotUser );
+
+// Fetching ids of alloted users to sender id's 
+router.get('/fetchIds', fetchController.fetchUsers );
 
 // Export Router
 module.exports = router;

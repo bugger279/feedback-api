@@ -6,13 +6,15 @@ function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-let allotUser = (req, res, next) => {
+let allotUser = (req, res) => {
     UserModel.find({}, function (err, users) {
         var usersArray = users;
         var userTotalCount = usersArray.length;
         var assignedUsers = [];
+        console.log(usersArray);
+        var flag = 0;
 
-        for (let selectedUserPosition = 0; selectedUserPosition < (userTotalCount - 25); selectedUserPosition++) {
+        for (let selectedUserPosition = 0; selectedUserPosition < userTotalCount; selectedUserPosition++) {
             console.log("selectedUserPosition : " + selectedUserPosition);
             while (assignedUsers.length != 3) {
                 var random = randomNumber(0, userTotalCount -1);
@@ -23,30 +25,35 @@ let allotUser = (req, res, next) => {
                     }
                 }
             }
-    
-            console.log("=============assignedUsers=============");
-            console.log(assignedUsers);
-            console.log("=============assignedUsers=============");
 
             assignedUsers.forEach(index => {
                 let newFeedback = new AllotUser({
                     sender_id: usersArray[selectedUserPosition]._id,
                     receiver_id: usersArray[index]._id,
+                    receiver_name: usersArray[index].name
                 })
 
                 newFeedback.save((err, newUserAlloted) => {
                     if (err) {
-                        let apiResponse = response.generate(true, "Failed to allot User", 500,  null)
-                        res.status(500).send(apiResponse);
+                        flag++;
                     } else {
-                        let apiResponse = response.generate(false, "User alloted successfully", 200,  null)
-                        res.send(apiResponse);
+                        flag = 0;
                     }
                 })
             });
             assignedUsers = [];
         }
     });
+
+    setTimeout(() => {
+        AllotUser.find({}, (err, response) => {
+        if (err) {
+            res.status(500).send({"error": true, "message" : "Internal Server Error"});
+        } else {
+            res.send({response});
+        }
+    })
+    }, 2000);
 }
 
 module.exports = { allotUser };

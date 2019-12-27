@@ -82,7 +82,8 @@ let giveUserFeedback = (req, res) => {
                                     var newFeedback = new FeedbackModel({
                                         sender_id: sender_id,
                                         receiver_id: receiver_id,
-                                        feedback_data: feedback_data
+                                        feedback_data: feedback_data,
+                                        active: false
                                     });
                                     newFeedback.save((err, feedbackData) => {
                                         if (err) {
@@ -127,8 +128,16 @@ let giveUserFeedback = (req, res) => {
         })
 }
 
-let viewFeedback = (req, res) => {
-    return "Hi"
+let fetchYourFeedback = (req, res) => {
+    FeedbackModel.find({"receiver_id": req.body.receiver_id}, {active: false}, (err, receivedFeedback) => {
+        if (err) {
+            res.status(400).send({"message": "No Users Alloted"})
+        } else {
+            console.log(receivedFeedback);
+
+            res.send({"feedbacks": receivedFeedback});
+        }
+    })
 }
 
-module.exports = { giveUserFeedback, viewFeedback };
+module.exports = { giveUserFeedback, fetchYourFeedback };
