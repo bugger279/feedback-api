@@ -158,9 +158,8 @@ let loginFunction = (req, res) => {
                     const options = { expiresIn: '2d', issuer: 'Inder' };
                     const secret = "mySecretKey";
                     const token = jwt.sign(payload, secret, options);
-
-                    // retreivedUserDetailsObj.token = token;
-                    res.setHeader('token', token);
+                    retreivedUserDetailsObj.token = token;
+                    // res.setHeader('token', token);
                     resolve(retreivedUserDetailsObj);
                 } else {
                     let apiResponse = response.generate(true, 'Login Failed', 401, "Incorrect Password");
@@ -182,19 +181,31 @@ let loginFunction = (req, res) => {
         })
 }
 
-let viewAllUsers = (req, res) => {
-    return new Promise((resolve, reject) => {
-        UserModel.find({}, (err, usersData) => {
-            if (err) {
-                let apiResponse = response.generate(true, "Internal Server Error", 500, null);
-                res.status(500);
-                reject(apiResponse);
-            } else {
-                
-            }
+let findAllUsers = (req, res) => {
+    let users = () => {
+        return new Promise((resolve, reject) => {
+            UserModel.find({}, (err, allUser) => {
+                if (err) {
+                    reject({ "error": true, "message": "Internal Server Error" });
+                } else {
+                    if (check.isEmpty(allUser)) {
+                        res.status(404);
+                        reject({ "error": false, "message": "No Users Found!" })
+                    } else {
+                        resolve(allUser);
+                    }
+                }
+            })
         });
-    }).then()
-        .catch();
+    }
+
+    users(req, res)
+        .then((resolve) => {
+            res.send(resolve);
+        })
+        .catch((err) => {
+            res.send(err);
+        })
 }
 
-module.exports = { signUpFunction, loginFunction };
+module.exports = { signUpFunction, loginFunction, findAllUsers };

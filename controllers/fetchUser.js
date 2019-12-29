@@ -6,7 +6,7 @@ const sendmail = require('sendmail')();
 
 let fetchUsers = (req, res) => {
     let usernames = [];
-    giveFeedbackModel.find({ "sender_id": req.params.sender_id }, (err, allotedData) => {
+    giveFeedbackModel.find({ "sender_id": req.params.sender_id, "active": true }, (err, allotedData) => {
         if (err) {
             res.status(400).send({ "message": "No Users Alloted" });
         } else {

@@ -1,4 +1,4 @@
-const FeedbackModel = require('../models/feedback');
+const FeedbackModel = require('../models/giveFeedback');
 const response = require('../libs/response');
 const check = require('../libs/checkLib');
 const jwt = require('jsonwebtoken');
@@ -17,18 +17,18 @@ let giveUserFeedback = (req, res) => {
                     if (err) {
                         let apiResponse = response.generate(true, "Invalid WebToken", 406, "");
                         let fetchUserRandom = (req, res) => {
-                            UserModel.count().exec(function(err, count){
+                            UserModel.count().exec(function (err, count) {
                                 var random = Math.floor(Math.random() * count);
                                 Model.findOne().skip(random).exec(
                                     function (err, result) {
-                                    if (err) {
-                                        console.log(err);
-                                    } else {
-                                        console.log("===============Random===============");
-                                        console.log(result);
-                                        console.log("===============Random===============");
-                                    }
-                                });
+                                        if (err) {
+                                            console.log(err);
+                                        } else {
+                                            console.log("===============Random===============");
+                                            console.log(result);
+                                            console.log("===============Random===============");
+                                        }
+                                    });
                             });
                         }
                         reject(apiResponse);
@@ -53,91 +53,86 @@ let giveUserFeedback = (req, res) => {
                 res.status(409);
                 reject(apiResponse);
             } else {
-             if (check.isEmpty(receiver_id) || check.isEmpty(feedback_data)) {
-                let apiResponse = response.generate(true, 'Feedback or receiver Id cannot be empty', 404, null);
-                res.status(404);
-                reject(apiResponse);
-            } else {
-                UserModel.findOne({ _id: receiver_id }, (err, retreivedUserDetails) => {
-                    if (err) {
-                        let apiResponse = response.generate(true, 'Failed to find Details', 500, null);
-                        res.status(500);
-                        reject(apiResponse);
-                    } else if (check.isEmpty(retreivedUserDetails)) {
-                        let apiResponse = response.generate(true, 'No Users with such Id', 404, null);
-                        res.status(404);
-                        reject(apiResponse);
-                    } else {
-                        FeedbackModel.findOne({sender_id: sender_id, receiver_id: receiver_id}, (err, data) => {
-                            if (err) {
-                                let apiResponse = response.generate(true, 'Failed to find Details', 500, null);
-                                res.status(500);
-                                reject(apiResponse);
-                            } else {
-                                if (!check.isEmpty(data)) {
-                                    let apiResponse = response.generate(true, 'Feedback already given', 409, null);
-                                    res.status(409);
+                if (check.isEmpty(receiver_id) || check.isEmpty(feedback_data)) {
+                    let apiResponse = response.generate(true, 'Feedback or receiver Id cannot be empty', 404, null);
+                    res.status(404);
+                    reject(apiResponse);
+                } else {
+                    UserModel.findOne({ _id: receiver_id }, (err, retreivedUserDetails) => {
+                        if (err) {
+                            let apiResponse = response.generate(true, 'Failed to find Details', 500, null);
+                            res.status(500);
+                            reject(apiResponse);
+                        } else if (check.isEmpty(retreivedUserDetails)) {
+                            let apiResponse = response.generate(true, 'No Users with such Id', 404, null);
+                            res.status(404);
+                            reject(apiResponse);
+                        } else {
+                            FeedbackModel.findOne({ sender_id: sender_id, receiver_id: receiver_id }, (err, data) => {
+                                if (err) {
+                                    let apiResponse = response.generate(true, 'Failed to find Details', 500, null);
+                                    res.status(500);
                                     reject(apiResponse);
                                 } else {
-                                    var newFeedback = new FeedbackModel({
-                                        sender_id: sender_id,
-                                        receiver_id: receiver_id,
-                                        feedback_data: feedback_data,
-                                        active: false
-                                    });
-                                    newFeedback.save((err, feedbackData) => {
-                                        if (err) {
-                                            let apiResponse = response.generate(true, 'Failed to create feedback', 500, null);
-                                            reject(apiResponse);
-                                        } else {
-                                            let feedbackDataObj = feedbackData.toObject();
-                                            delete feedbackDataObj.__v;
-                                            resolve(feedbackDataObj);
-                                        }
-                                    });
+                                    if (!check.isEmpty(data)) {
+                                        let apiResponse = response.generate(true, 'Feedback already given', 409, null);
+                                        res.status(409);
+                                        reject(apiResponse);
+                                    } else {
+                                        var newFeedback = new FeedbackModel({
+                                            sender_id: sender_id,
+                                            receiver_id: receiver_id,
+                                            feedback_data: feedback_data,
+                                            active: false
+                                        });
+                                        newFeedback.save((err, feedbackData) => {
+                                            if (err) {
+                                                let apiResponse = response.generate(true, 'Failed to create feedback', 500, null);
+                                                reject(apiResponse);
+                                            } else {
+                                                let feedbackDataObj = feedbackData.toObject();
+                                                delete feedbackDataObj.__v;
+                                                resolve(feedbackDataObj);
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        })
-                    }
-                })
-            }   
+                            })
+                        }
+                    })
+                }
             }
-
         })
     }
-    // Fetch User id from token
-    let fetchUser = () => {
-        return new Promise((resolve, reject) => {
-            db.users.aggregate([{ $sample: { size: 3 } }])
-            UserModel.find()
-                    .limit(3)
-                    .exec(function (err, songs) {
-                        res.json(songs);
-                    });
-        });
-    }
-    // Assign Three randoms users
-    validateToken(req, res)
-        .then(insertFeedback)
-        .then((resolve) => {
-            let apiResponse = response.generate(false, 'Token Validated', 200, resolve);
-            res.send(apiResponse);
-        })
-        .catch((err) => {
-            res.send(err)
-        })
 }
 
 let fetchYourFeedback = (req, res) => {
-    FeedbackModel.find({"receiver_id": req.body.receiver_id}, {active: false}, (err, receivedFeedback) => {
-        if (err) {
-            res.status(400).send({"message": "No Users Alloted"})
-        } else {
-            console.log(receivedFeedback);
-
-            res.send({"feedbacks": receivedFeedback});
-        }
-    })
+    let getFeedback = () => {
+        return new Promise((resolve, reject) => {
+            FeedbackModel.find({ "receiver_id": req.params.receiver_id, "active": false }, (err, receivedFeedback) => {
+                if (err) {
+                    res.status(400)
+                    reject(res.send({ "message": "No Users Alloted" }));
+                } else {
+                    // let receivedFeedbackObj = receivedFeedback.toObject();
+                    // delete receivedFeedbackObj.sender_id;
+                    // delete receivedFeedbackObj.sender_name;
+                    // delete receivedFeedbackObj.sender_email;
+                    // delete receivedFeedbackObj.__v;
+                    // delete receivedFeedbackObj._id;
+                    resolve(receivedFeedback)
+                }
+            })
+        });
+    }
+    
+    getFeedback(req,res)
+        .then((data) => {
+            res.send(data);
+        })
+        .catch((error) => {
+            res.send(error);
+        })
 }
 
 module.exports = { giveUserFeedback, fetchYourFeedback };

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "dffe9abb-a2b9-4045-a4fd-11300ca918a8",
+		"_postman_id": "cc3b5cfc-2743-4c2b-bced-5ce8083108d4",
 		"name": "feedback-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"password\": \"jackal855\",\n\t\"email\": \"inderjeet.sav@neosofttech.com\"\n}",
+					"raw": "{\n\t\"password\": \"goat578\",\n\t\"email\": \"sav.inder279@gmail.com\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -181,6 +181,47 @@
 					"path": [
 						"api",
 						"allotUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "yourFeedbacks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/feedback/5e035c18e8551b0d8c1180dd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"feedback",
+						"5e035c18e8551b0d8c1180dd"
 					]
 				}
 			},
