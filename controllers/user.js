@@ -152,9 +152,10 @@ let loginFunction = (req, res) => {
             } else {
                 if (bcrypt.compareSync(req.body.password, retreivedUserDetails.password)) {
                     let retreivedUserDetailsObj = retreivedUserDetails.toObject();
-                    delete retreivedUserDetailsObj.password;
                     delete retreivedUserDetailsObj.__v;
                     const payload = { UserData: retreivedUserDetailsObj };
+                    // delete retreivedUserDetailsObj.password;
+                    
                     const options = { expiresIn: '2d', issuer: 'Inder' };
                     const secret = "mySecretKey";
                     const token = jwt.sign(payload, secret, options);
