@@ -48,7 +48,7 @@ let allotUser = (req, res) => {
                         receiver_name: usersArray[index].name,
                         receiver_email: usersArray[index].email,
                         feedback_data: "",
-                        active: true
+                        active: false
                     })
 
                     newFeedback.save((err, newUserAlloted) => {
@@ -97,7 +97,7 @@ let allotUser = (req, res) => {
                     else {
                         results.forEach(result => {
                             let toEmail = result.sender_email;
-                            fromEmail = 'inderjeet.save@neosofttech.com';
+                            fromEmail = 'inderjeet.sav@neosofttech.com';
                             // Send Mail Code
                             sendmail({
                                 from: fromEmail,

@@ -38,7 +38,7 @@ let fetchUsers = (req, res) => {
             let sender_id = tokenData.UserData._id;
             // let usernames = [];
 
-            giveFeedbackModel.find({ "sender_id": sender_id, "active": true }, (err, allotedData) => {
+            giveFeedbackModel.find({ "sender_id": sender_id, "active": false }, (err, allotedData) => {
                 if (err) {
                     res.status(400);
                     reject(res.send({ "message": "No Users Alloted" }));

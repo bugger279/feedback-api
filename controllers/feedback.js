@@ -40,15 +40,17 @@ let giveUserFeedback = (req, res) => {
                 res.status(409);
                 reject(apiResponse);
             } else {
-                if (check.isEmpty(receiver_id) || check.isEmpty(feedback_data)) {
-                    let apiResponse = response.generate(true, 'Feedback or receiver Id cannot be empty', 404, null);
+                if (check.isEmpty(receiver_id)) {
+                    let apiResponse = response.generate(true, 'Receiver Id cannot be empty', 404, null);
                     res.status(404);
                     reject(apiResponse);
-                    if (feedback_data.length < 15) {
-                        let apiResponse = response.generate(true, 'Feedback length should be greater than 15 characters', 406, null);
-                        res.status(406);
-                        reject(apiResponse);
-                    }
+                } else if (feedback_data.length < 15) {
+                    console.log("length: " + feedback_data.length);
+                    
+                    let apiResponse = response.generate(true, 'Feedback length should be greater than 15 characters', 406, null);
+                    res.status(406);
+                    reject(apiResponse);
+                    console.log("++++++++++++++");
                 } else {
                     UserModel.findOne({ _id: receiver_id }, (err, retreivedUserDetails) => {
                         if (err) {
@@ -60,7 +62,7 @@ let giveUserFeedback = (req, res) => {
                             res.status(404);
                             reject(apiResponse);
                         } else {
-                            FeedbackModel.findOne({ sender_id: sender_id, receiver_id: receiver_id, active: false }, (err, data) => {
+                            FeedbackModel.findOne({ sender_id: sender_id, receiver_id: receiver_id, active: true }, (err, data) => {
                                 if (err) {
                                     let apiResponse = response.generate(true, 'Failed to find Details', 500, null);
                                     res.status(500);
@@ -72,7 +74,7 @@ let giveUserFeedback = (req, res) => {
                                         reject(apiResponse);
                                     } else {
                                         var query = { "sender_id": sender_id, "receiver_id": receiver_id };
-                                        var update = { "feedback_data": feedback_data, "active": false };
+                                        var update = { "feedback_data": feedback_data, "active": true };
                                         var options = { new: true };
                                         FeedbackModel.findOneAndUpdate(query, update, options, function (err, feedbackData) {
                                             if (err) {
@@ -130,7 +132,7 @@ let fetchYourFeedback = (req, res) => {
     let getFeedback = (tokenData) => {
         return new Promise((resolve, reject) => {
             let sender_id = tokenData.UserData._id;
-            FeedbackModel.find({ "receiver_id": sender_id, "active": false }, (err, receivedFeedback) => {
+            FeedbackModel.find({ "receiver_id": sender_id, "active": true }, (err, receivedFeedback) => {
                 if (err) {
                     res.status(400);
                     reject(res.send({ "message": "No Users Alloted" }));

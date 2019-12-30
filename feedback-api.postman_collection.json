@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "cc3b5cfc-2743-4c2b-bced-5ce8083108d4",
+		"_postman_id": "dffe9abb-a2b9-4045-a4fd-11300ca918a8",
 		"name": "feedback-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"password\": \"goat578\",\n\t\"email\": \"sav.inder279@gmail.com\"\n}",
+					"raw": "{\n\t\"password\": \"jackal855\",\n\t\"email\": \"inderjeet.sav@neosofttech.com\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -84,7 +84,7 @@
 				"header": [
 					{
 						"key": "token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyRGF0YSI6eyJfaWQiOiI1ZTAwZWI1ZGVlZWZjNDMwNWU1ZmRjMzAiLCJuYW1lIjoiSW5kZXIiLCJlbWFpbCI6ImluZGVyamVldC5zYXZAbmVvc29mdHRlY2guY29tIn0sImlhdCI6MTU3NzM2Mzk5NywiZXhwIjoxNTc3NTM2Nzk3LCJpc3MiOiJJbmRlciJ9.MaU6idTXdjbsrDGBEf064Geg8_E1LFx2JChGzjLXs3A",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyRGF0YSI6eyJfaWQiOiI1ZTAwZWI1ZGVlZWZjNDMwNWU1ZmRjMzAiLCJuYW1lIjoiSW5kZXIiLCJlbWFpbCI6ImluZGVyamVldC5zYXZAbmVvc29mdHRlY2guY29tIn0sImlhdCI6MTU3NzcwMzg5MywiZXhwIjoxNTc3ODc2NjkzLCJpc3MiOiJJbmRlciJ9.SPXosC7PNmorzKXDgqRSa397Ar_kJT8tKC26e4-pbf4",
 						"type": "text"
 					},
 					{
@@ -99,12 +99,12 @@
 					"urlencoded": [
 						{
 							"key": "receiver_id",
-							"value": "5e0202b35a570874b11969e5",
+							"value": "5e0638d360b7226fb566b7a4",
 							"type": "text"
 						},
 						{
 							"key": "feedback_data",
-							"value": "Excellent work",
+							"value": "My Test Feedback",
 							"type": "text"
 						}
 					]
@@ -137,6 +137,11 @@
 						"name": "Content-Type",
 						"value": "application/x-www-form-urlencoded",
 						"type": "text"
+					},
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyRGF0YSI6eyJfaWQiOiI1ZTAwZWI1ZGVlZWZjNDMwNWU1ZmRjMzAiLCJuYW1lIjoiSW5kZXIiLCJlbWFpbCI6ImluZGVyamVldC5zYXZAbmVvc29mdHRlY2guY29tIn0sImlhdCI6MTU3NzcwMzg5MywiZXhwIjoxNTc3ODc2NjkzLCJpc3MiOiJJbmRlciJ9.SPXosC7PNmorzKXDgqRSa397Ar_kJT8tKC26e4-pbf4",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -151,7 +156,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/fetchIds/5e00eb5deeefc4305e5fdc30",
+					"raw": "http://localhost:3000/api/fetchIds",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -159,8 +164,7 @@
 					"port": "3000",
 					"path": [
 						"api",
-						"fetchIds",
-						"5e00eb5deeefc4305e5fdc30"
+						"fetchIds"
 					]
 				}
 			},
@@ -207,12 +211,18 @@
 			"response": []
 		},
 		{
-			"name": "yourFeedbacks",
+			"name": "Your Feedbacks",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyRGF0YSI6eyJfaWQiOiI1ZTAwZWI1ZGVlZWZjNDMwNWU1ZmRjMzAiLCJuYW1lIjoiSW5kZXIiLCJlbWFpbCI6ImluZGVyamVldC5zYXZAbmVvc29mdHRlY2guY29tIn0sImlhdCI6MTU3NzcxODk0NCwiZXhwIjoxNTc3ODkxNzQ0LCJpc3MiOiJJbmRlciJ9.MAFLvRYOjbZ-LHN2dl4NnUbiGoVS43EJYT6kT6Z6Txk",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "http://localhost:3000/api/feedback/5e035c18e8551b0d8c1180dd",
+					"raw": "http://localhost:3000/api/feedback/",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -221,7 +231,7 @@
 					"path": [
 						"api",
 						"feedback",
-						"5e035c18e8551b0d8c1180dd"
+						""
 					]
 				}
 			},
