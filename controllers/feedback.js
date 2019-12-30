@@ -16,23 +16,10 @@ let giveUserFeedback = (req, res) => {
                 jwt.verify(req.header('token'), 'mySecretKey', options, (err, decoded) => {
                     if (err) {
                         let apiResponse = response.generate(true, "Invalid WebToken", 406, "");
-                        let fetchUserRandom = (req, res) => {
-                            UserModel.count().exec(function (err, count) {
-                                var random = Math.floor(Math.random() * count);
-                                Model.findOne().skip(random).exec(
-                                    function (err, result) {
-                                        if (err) {
-                                            console.log(err);
-                                        } else {
-                                            console.log("===============Random===============");
-                                            console.log(result);
-                                            console.log("===============Random===============");
-                                        }
-                                    });
-                            });
-                        }
                         reject(apiResponse);
-                    } else { resolve(decoded); }
+                    } else {
+                        resolve(decoded);
+                    }
                 });
             } else {
                 let apiResponse = response.generate(true, "Authentication Token Required", 406, "");
@@ -57,6 +44,11 @@ let giveUserFeedback = (req, res) => {
                     let apiResponse = response.generate(true, 'Feedback or receiver Id cannot be empty', 404, null);
                     res.status(404);
                     reject(apiResponse);
+                    if (feedback_data.length < 15) {
+                        let apiResponse = response.generate(true, 'Feedback length should be greater than 15 characters', 406, null);
+                        res.status(406);
+                        reject(apiResponse);
+                    }
                 } else {
                     UserModel.findOne({ _id: receiver_id }, (err, retreivedUserDetails) => {
                         if (err) {
@@ -68,7 +60,7 @@ let giveUserFeedback = (req, res) => {
                             res.status(404);
                             reject(apiResponse);
                         } else {
-                            FeedbackModel.findOne({ sender_id: sender_id, receiver_id: receiver_id }, (err, data) => {
+                            FeedbackModel.findOne({ sender_id: sender_id, receiver_id: receiver_id, active: false }, (err, data) => {
                                 if (err) {
                                     let apiResponse = response.generate(true, 'Failed to find Details', 500, null);
                                     res.status(500);
@@ -79,21 +71,17 @@ let giveUserFeedback = (req, res) => {
                                         res.status(409);
                                         reject(apiResponse);
                                     } else {
-                                        var newFeedback = new FeedbackModel({
-                                            sender_id: sender_id,
-                                            receiver_id: receiver_id,
-                                            feedback_data: feedback_data,
-                                            active: false
-                                        });
-                                        newFeedback.save((err, feedbackData) => {
+                                        var query = { "sender_id": sender_id, "receiver_id": receiver_id };
+                                        var update = { "feedback_data": feedback_data, "active": false };
+                                        var options = { new: true };
+                                        FeedbackModel.findOneAndUpdate(query, update, options, function (err, feedbackData) {
                                             if (err) {
                                                 let apiResponse = response.generate(true, 'Failed to create feedback', 500, null);
                                                 reject(apiResponse);
-                                            } else {
-                                                let feedbackDataObj = feedbackData.toObject();
-                                                delete feedbackDataObj.__v;
-                                                resolve(feedbackDataObj);
                                             }
+                                            let feedbackDataObj = feedbackData.toObject();
+                                            delete feedbackDataObj.__v;
+                                            resolve(feedbackDataObj);
                                         });
                                     }
                                 }
@@ -104,29 +92,62 @@ let giveUserFeedback = (req, res) => {
             }
         })
     }
+
+    validateToken(req, res)
+        .then(insertFeedback)
+        .then((data) => {
+            res.send(data)
+        })
+        .catch((err) => {
+            res.send(err)
+        });
 }
 
 let fetchYourFeedback = (req, res) => {
-    let getFeedback = () => {
+    // Get Your Id from token
+    let validateToken = () => {
         return new Promise((resolve, reject) => {
-            FeedbackModel.find({ "receiver_id": req.params.receiver_id, "active": false }, (err, receivedFeedback) => {
+            if (req.header('token')) {
+                const options = {
+                    expiresIn: '2d',
+                    issuer: 'Inder'
+                }
+                jwt.verify(req.header('token'), 'mySecretKey', options, (err, decoded) => {
+                    if (err) {
+                        let apiResponse = response.generate(true, "Invalid WebToken", 406, "");
+                        reject(apiResponse);
+                    } else {
+                        resolve(decoded);
+                    }
+                });
+            } else {
+                let apiResponse = response.generate(true, "Authentication Token Required", 406, "");
+                reject(apiResponse);
+            }
+        })
+    }
+
+    let getFeedback = (tokenData) => {
+        return new Promise((resolve, reject) => {
+            let sender_id = tokenData.UserData._id;
+            FeedbackModel.find({ "receiver_id": sender_id, "active": false }, (err, receivedFeedback) => {
                 if (err) {
-                    res.status(400)
+                    res.status(400);
                     reject(res.send({ "message": "No Users Alloted" }));
                 } else {
-                    // let receivedFeedbackObj = receivedFeedback.toObject();
-                    // delete receivedFeedbackObj.sender_id;
-                    // delete receivedFeedbackObj.sender_name;
-                    // delete receivedFeedbackObj.sender_email;
-                    // delete receivedFeedbackObj.__v;
-                    // delete receivedFeedbackObj._id;
-                    resolve(receivedFeedback)
+                    if (check.isEmpty(receivedFeedback)) {
+                        let apiResponse = response.generate(false, "No Feedback found", 200, null);
+                        reject(apiResponse);
+                    } else {
+                        resolve(receivedFeedback)
+                    }
                 }
             })
         });
     }
-    
-    getFeedback(req,res)
+
+    validateToken(req, res)
+        .then(getFeedback)
         .then((data) => {
             res.send(data);
         })

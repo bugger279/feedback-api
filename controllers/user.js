@@ -18,7 +18,7 @@ let signUpFunction = (req, res) => {
     let validateInputs = () => {
         return new Promise((resolve, reject) => {
             if (req.body.name && req.body.email) {
-                if (!validateInput.Name(req.body.name)) {
+                if (!validateInput.NameSpace(req.body.name)) {
                     let apiResponse = response.generate(true, "Name should not contain numbers", 406, "");
                     res.status(406);
                     reject(apiResponse);

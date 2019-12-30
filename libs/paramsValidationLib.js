@@ -16,6 +16,15 @@ let Name = (name) => {
   }
 }
 
+let NameSpace = (name) => {
+  let nameRegex = /^[a-zA-Z ]+$/;
+  if (name.match(nameRegex)) {
+    return name
+  } else {
+    return false
+  }
+}
+
 /* Minimum 8 characters which contain only characters,numeric digits, underscore and first character must be a letter */
 let Password = (password) => {
   let passwordRegex = /^[A-Za-z0-9]\w{7,}$/
@@ -29,5 +38,6 @@ let Password = (password) => {
 module.exports = {
   Email: Email,
   Name: Name,
-  Password: Password
+  Password: Password,
+  NameSpace: NameSpace
 }

@@ -14,11 +14,11 @@ router.get('/users', registerController.findAllUsers)
 
 // Creating a route for feedback
 router.post('/feedback', feedbackController.giveUserFeedback);
-router.get('/feedback/:receiver_id', feedbackController.fetchYourFeedback);
+router.get('/feedback', feedbackController.fetchYourFeedback);
 router.post('/allotUser', allotController.allotUser );
 
 // Fetching ids of alloted users to sender id's 
-router.get('/fetchIds/:sender_id', fetchController.fetchUsers);
+router.get('/fetchIds', fetchController.fetchUsers);
 
 // Export Router
 module.exports = router;
