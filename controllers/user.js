@@ -209,4 +209,5 @@ let findAllUsers = (req, res) => {
         })
 }
 
+
 module.exports = { signUpFunction, loginFunction, findAllUsers };

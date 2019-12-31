@@ -10,7 +10,7 @@ const fetchController = require('../controllers/fetchUser');
 // Creating a route for User
 router.post('/register', registerController.signUpFunction);
 router.post('/login', registerController.loginFunction);
-router.get('/users', registerController.findAllUsers)
+router.get('/users', registerController.findAllUsers);
 
 // Creating a route for feedback
 router.post('/feedback', feedbackController.giveUserFeedback);
