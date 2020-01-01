@@ -151,7 +151,8 @@ let fetchYourFeedback = (req, res) => {
     validateToken(req, res)
         .then(getFeedback)
         .then((data) => {
-            res.send(data);
+            let apiResponse = response.generate(false, "Feedbacks Found", 200, data);
+            res.send(apiResponse);
         })
         .catch((error) => {
             res.send(error);
