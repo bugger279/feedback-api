@@ -44,13 +44,14 @@ let giveUserFeedback = (req, res) => {
                     let apiResponse = response.generate(true, 'Receiver Id cannot be empty', 404, null);
                     res.status(404);
                     reject(apiResponse);
+                } else if (check.isEmpty(feedback_data)) {
+                    let apiResponse = response.generate(true, 'Feedback Cannot be Empty', 406, null);
+                    res.status(406);
+                    reject(apiResponse);
                 } else if (feedback_data.length < 15) {
-                    console.log("length: " + feedback_data.length);
-                    
                     let apiResponse = response.generate(true, 'Feedback length should be greater than 15 characters', 406, null);
                     res.status(406);
                     reject(apiResponse);
-                    console.log("++++++++++++++");
                 } else {
                     UserModel.findOne({ _id: receiver_id }, (err, retreivedUserDetails) => {
                         if (err) {

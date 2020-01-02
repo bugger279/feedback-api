@@ -41,7 +41,8 @@ let fetchUsers = (req, res) => {
             giveFeedbackModel.find({ "sender_id": sender_id, "active": false }, (err, allotedData) => {
                 if (err) {
                     res.status(400);
-                    reject(res.send({ "message": "No Users Alloted" }));
+                    let apiResponse = response.generate(true, "No Users Alloted or Feedback already given", 400, null);
+                    reject(apiResponse);
                 } else {
                     resolve(allotedData);
                 }
@@ -52,7 +53,13 @@ let fetchUsers = (req, res) => {
     validateToken(req, res)
         .then(fetchIds)
         .then((data) => {
-            res.send(data);
+            if (data.length < 1) {
+                let apiResponse = response.generate(false, "You have given feedback", 200, null);
+                res.send(apiResponse);   
+            } else {
+                let apiResponse = response.generate(false, "UsersList", 200, data);
+                res.send(apiResponse);                
+            }
         })
         .catch((err) => {
             res.send(err);
